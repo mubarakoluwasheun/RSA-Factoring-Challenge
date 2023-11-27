@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
-# Factorize numbers into a product of two smaller numbers
+# Factorize as many numbers as possible into a product of two smaller numbers.
 
 while IFS= read -r LINE
 do
-	NUM=$LINE
-	for ((DIV = 2; DIV * DIV <= NUM; DIV++))
+	let FLAG=1
+	let DIV=2
+	while [ $FLAG -eq 1 ]
 	do
-		while ((NUM % DIV == 0))
-		do
-			printf "%d=%d*%d\n" "$LINE" "$DIV" "$((NUM / DIV))"
-			((NUM /= DIV))
-		done
+		let REST=$(($LINE%$DIV))
+		if [[ $REST -eq 0 ]]
+		then
+			let NUM=$LINE
+			let COUNT=$(($NUM/$DIV))
+			echo "$LINE=$COUNT*$DIV"
+			let FLAG=0
+		fi
+		let DIV=$(($DIV+1))
 	done
-	if ((NUM > 1)); then
-		printf "%d=%d*%d\n" "$LINE" "$NUM" 1
-	fi
-done < "$1"
+done < $1
