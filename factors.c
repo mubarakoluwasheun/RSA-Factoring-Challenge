@@ -1,11 +1,18 @@
-#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
+#include <string.h>
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 	FILE *stream;
 	char *line = NULL;
 	size_t len = 0;
+	long long flag = 1, div, rest, number, counter;
 	ssize_t nread;
 
 	if (argc != 2) {
@@ -20,19 +27,16 @@ int main(int argc, char *argv[]) {
 	}
 
 	while ((nread = getline(&line, &len, stream)) != -1) {
-		long long number = atoll(line);
-		long long div = 2;
-
-		while (div * div <= number) {
-			if (number % div == 0) {
-				printf("%lld=%lld*%lld\n", number, number / div, div);
-				break;
+		flag = 1, div = 2;
+		number = atoll(line);
+		while (flag) {
+			rest = number % div;
+			if (!rest) {
+				counter = number / div;
+				printf("%lld=%lld*%lld\n", number, counter, div);
+				flag = 0;
 			}
 			div++;
-	        }
-
-		if (div * div > number && number != 1) {
-			printf("%lld=%lld*%lld\n", number, number, 1LL);
 		}
 	}
 
